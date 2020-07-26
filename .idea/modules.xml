@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/korean-gongbu-frontend.iml" filepath="$PROJECT_DIR$/.idea/korean-gongbu-frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/korean-gongbu.iml" filepath="$PROJECT_DIR$/.idea/korean-gongbu.iml" />
     </modules>
   </component>
 </project>
