@@ -1,9 +1,14 @@
 use std::path::Path;
 use std::time::Duration;
 
-use crate::errors::{AppError, AppResult};
+use tracing::{info, instrument};
 
-pub async fn sleepy(seconds: u64) -> AppResult {
+use crate::errors::{AppError, AppResult, EndpointResult};
+
+#[instrument]
+pub async fn sleepy(seconds: u64) -> EndpointResult {
+    info!("test, seconds={}", seconds);
+
     tokio::time::delay_for(Duration::from_secs(seconds)).await;
     let response = String::from("{\"data\": \"ok!\"}");
 
