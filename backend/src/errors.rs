@@ -1,6 +1,7 @@
 use warp;
 
-pub type AppResult = std::result::Result<warp::reply::Json, warp::Rejection>;
+pub type AppResult<T> = std::result::Result<T, AppError>;
+pub type EndpointResult = std::result::Result<warp::reply::Json, warp::Rejection>;
 
 #[derive(Debug)]
 pub enum AppError {
