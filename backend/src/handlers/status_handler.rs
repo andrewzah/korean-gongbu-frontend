@@ -1,9 +1,8 @@
-use std::path::Path;
 use std::time::Duration;
 
 use tracing::{info, instrument};
 
-use crate::errors::{AppError, AppResult, EndpointResult};
+use crate::errors::{EndpointResult};
 
 #[instrument]
 pub async fn sleepy(seconds: u64) -> EndpointResult {
