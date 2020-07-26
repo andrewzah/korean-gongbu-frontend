@@ -1,6 +1,6 @@
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
-use warp::{self, Filter};
+use warp::Filter;
 
 mod errors;
 mod handlers;
@@ -20,7 +20,7 @@ async fn main() {
     );
 
     let app_state = AppState {
-        jwt_secret: String::from("changeme")
+        jwt_secret: String::from("changeme"),
     };
 
     let routes = routes::routes(app_state)
