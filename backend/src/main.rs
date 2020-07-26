@@ -1,48 +1,43 @@
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-
 use tracing::{info, Level};
 use tracing_subscriber;
 use warp::Filter;
 
 mod errors;
 mod handlers;
+mod models;
 mod routes;
 
-use crate::errors::{AppResult, EndpointResult};
+use crate::errors::{AppResult};
+use crate::models::{app_config::AppConfig, app_state::AppState};
 
 const APPLICATION_NAME: &str = env!("CARGO_PKG_NAME");
 
-#[derive(Clone)]
-pub struct AppState {
-    pub jwt_secret: String,
-}
 
 fn setup() {
+    dotenv::dotenv().ok();
+
     let subscriber = tracing_subscriber::fmt()
         .with_max_level(Level::TRACE)
         .finish();
 
     tracing::subscriber::set_global_default(subscriber)
-        .expect("no global subscriber has been set");
+        .expect("no global subscriber has been set")
 }
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
     setup();
-
-    let bind_address = SocketAddr::new(
-        IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), 3030
-    );
+    let app_config = AppConfig::new()?;
 
     let app_state = AppState {
-        jwt_secret: String::from("changeme"),
+        jwt_secret: String::from("todo: changeme"),
     };
 
     let routes = routes::routes(app_state)
         .with(warp::log(APPLICATION_NAME));
 
-    println!("Server listening at {}", &bind_address);
-    warp::serve(routes).run(bind_address).await;
+    info!("Server listening at {}", &app_config.addr);
+    warp::serve(routes).run(app_config.addr).await;
 
     Ok(())
 }
