@@ -33,7 +33,7 @@ export default {
   input: 'src/main.ts',
   output: {
     sourcemap: true,
-    format: 'iife',
+    format: 'iife', // https://github.com/sveltejs/svelte/issues/168#issuecomment-266125755
     name: 'app',
     file: 'public/build/bundle.js',
   },
@@ -48,16 +48,16 @@ export default {
       },
       preprocess: sveltePreprocess(),
     }),
+    resolve({
+      browser: true,
+      dedupe: ['svelte'],
+    }),
 
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
     // some cases you'll need additional configuration -
     // consult the documentation for details:
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
-    resolve({
-      browser: true,
-      dedupe: ['svelte'],
-    }),
     commonjs(),
     typescript({ sourceMap: !production }),
 

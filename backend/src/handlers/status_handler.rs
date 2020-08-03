@@ -1,10 +1,10 @@
 use std::time::Duration;
 
-use tracing::{info, instrument};
+use tracing::info;
 
 use crate::errors::{EndpointResult};
 
-#[instrument]
+#[tracing::instrument]
 pub async fn sleepy(seconds: u64) -> EndpointResult {
     info!("test, seconds={}", seconds);
 
