@@ -2,5 +2,6 @@
 /frontend/public
 
 .DS_Store
+/backend/.env
 
 /**/target
