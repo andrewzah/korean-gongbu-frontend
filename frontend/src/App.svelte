@@ -1,4 +1,11 @@
 <script lang="ts">
+  import { Router } from '@sveltech/routify';
+  import { routes } from '@sveltech/routify/tmp/routes'
 </script>
 
-<main></main>
+<style></style>
+
+<main>
+  <Router {routes}/>
+</main>
+
