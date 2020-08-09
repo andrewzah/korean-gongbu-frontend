@@ -1,4 +1,5 @@
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy'
 import livereload from 'rollup-plugin-livereload';
 import resolve from '@rollup/plugin-node-resolve';
 import svelte from 'rollup-plugin-svelte';
@@ -6,8 +7,73 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 const smelte = require("smelte/rollup-plugin-smelte");
+import rust from "@wasm-tool/rollup-plugin-rust";
+require('fast-text-encoding');
 
+const staticDir = 'static';
 const production = !process.env.ROLLUP_WATCH;
+
+let conf = {
+  distDir: './public',
+  inlineDynamicImports: true,
+  output: {
+    sourcemap: true,
+    format: 'iife',
+    file: './public/build/bundle.js',
+  }
+}
+
+export default {
+  inlineDynamicImports: conf.inlineDynamicImports,
+  input: 'src/main.ts',
+  output: conf.output,
+  plugins: [
+    svelte({
+      dev: !production,
+      emitCss: true,
+      preprocess: sveltePreprocess(),
+    }),
+    copy({
+      targets: [
+        { src: [`${staticDir}/*`, "!*/(__index.html)"], dest: conf.distDir },
+        { src: [`${staticDir}/__index.html`], dest: conf.distDir, rename: '__app.html', transform },
+      ],
+      copyOnce: true,
+      flatten: false
+    }),
+    resolve({
+      browser: true,
+      dedupe: ['svelte'],
+    }),
+    commonjs(),
+    rust({
+      serverPath: "/build/",
+      verbose: true,
+    }),
+    smelte({
+      purge: production,
+      output: `${conf.distDir}/global.css`,
+      colors: {
+        primary: "#b027b0",
+        secondary: "#009688",
+      }
+    }),
+    typescript({ sourceMap: !production }),
+    !production && serve(),
+    !production && livereload(conf.distDir),
+    production && terser(),
+  ],
+  watch: {
+    clearScreen: false,
+  },
+};
+
+function transform(contents) {
+  return contents.toString().replace('__SCRIPT__', conf.inlineDynamicImports
+    ? '<script type="module" defer src="/build/main.js"></script>'
+    : '<script defer src="/build/bundle.js"></script>')
+}
+
 
 function serve() {
   let server;
@@ -29,64 +95,3 @@ function serve() {
     },
   };
 }
-
-export default {
-  input: 'src/main.ts',
-  output: {
-    sourcemap: true,
-    format: 'iife', // https://github.com/sveltejs/svelte/issues/168#issuecomment-266125755
-    name: 'app',
-    file: 'public/build/bundle.js',
-  },
-  plugins: [
-    svelte({
-      // enable run-time checks when not in production
-      dev: !production,
-      // we'll extract any component CSS out into
-      // a separate file - better for performance
-      // css: (css) => {
-      //   css.write('public/build/bundle.css');
-      // },
-      emitCss: true,
-      preprocess: sveltePreprocess(),
-    }),
-    resolve({
-      browser: true,
-      dedupe: ['svelte'],
-    }),
-
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
-    commonjs(),
-    smelte({
-      purge: production,
-      output: "public/global.css",
-    }),
-    // postcss({
-    //   extract: true,
-    //   minimize: true,
-    //   use: [
-    //     }]
-    //   ]
-    // }),
-    typescript({ sourceMap: !production }),
-
-    // In dev mode, call `npm run start` once
-    // the bundle has been generated
-    !production && serve(),
-
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
-    !production && livereload('public'),
-
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
-    production && terser(),
-  ],
-  watch: {
-    clearScreen: false,
-  },
-};

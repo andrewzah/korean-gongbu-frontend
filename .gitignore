@@ -1,5 +1,7 @@
 /frontend/node_modules/
 /frontend/public
+/frontend/dist
+/frontend/korean_nums_wasm/pkg
 
 .DS_Store
 /backend/.env
