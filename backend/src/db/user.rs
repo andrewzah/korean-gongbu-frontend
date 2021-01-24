@@ -1,12 +1,10 @@
 use diesel::prelude::*;
 use tracing::debug;
 
-use crate::db::*;
-use crate::models::user::*;
-use crate::errors::AppResult;
+use crate::{db::*, errors::AppError, models::v1::user::*};
 
 #[tracing::instrument]
-pub fn all() -> AppResult<Vec<User>> {
+pub fn all() -> Result<Vec<User>, AppError> {
     use crate::schema::users::dsl::*;
 
     let conn = pool().get()?;
