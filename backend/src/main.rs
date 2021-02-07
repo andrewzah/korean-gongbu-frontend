@@ -31,7 +31,7 @@ fn setup() {
     }
 
     if env::var("RUST_LOG").is_err() {
-        env::set_var("RUST_LOG", "korean_gongbu,kg_warp,warp=info");
+        env::set_var("RUST_LOG", "korean_gongbu,kg_warp,warp=debug");
     }
     tracing_subscriber::fmt::init();
 }

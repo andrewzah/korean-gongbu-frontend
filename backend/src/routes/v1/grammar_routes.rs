@@ -4,14 +4,14 @@ use crate::models::v1::requests::grammar::*;
 use crate::handlers::v1::grammar_handler;
 
 pub(crate) fn routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::any().and(get().or(search()))
+    warp::any().and(search().or(list()))
 }
 
 fn path_prefix() -> BoxedFilter<()> {
     path!("api" / "v1" / "grammars" / ..).boxed()
 }
 
-fn get() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
+fn list() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::get().and(path_prefix()).and_then(grammar_handler::list)
 }
 
@@ -23,6 +23,7 @@ fn search_json_body() -> impl Filter<Extract = (GrammarSearchRequest,), Error = 
 fn search() -> impl Filter<Extract = impl Reply, Error = Rejection> + Clone {
     warp::post()
         .and(path_prefix())
+        .and(path("search"))
         .and(search_json_body())
         .and_then(grammar_handler::search)
 }
