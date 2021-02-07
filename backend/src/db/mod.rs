@@ -7,6 +7,7 @@ use diesel::{
 use lazy_static::lazy_static;
 
 pub mod user;
+pub mod grammar;
 
 type DbPool = Arc<r2d2::Pool<ConnectionManager<PgConnection>>>;
 
