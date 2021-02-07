@@ -1,3 +1,4 @@
+pub(crate) mod grammar_routes;
 pub(crate) mod status_routes;
 pub(crate) mod user_routes;
 
@@ -10,7 +11,10 @@ use crate::AppState;
 pub fn service_routes(
     _state: AppState,
 ) -> impl warp::Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::any().and(user_routes::routes().or(status_routes::routes()))
+    warp::any()
+        .and(user_routes::routes()
+            .or(status_routes::routes())
+            .or(grammar_routes::routes()))
 }
 
 #[allow(dead_code)]
