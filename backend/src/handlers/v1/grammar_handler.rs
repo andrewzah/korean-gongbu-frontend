@@ -11,8 +11,8 @@ pub(crate) async fn list() -> Result<impl Reply, Rejection> {
     Ok(warp::reply::json(&resp))
 }
 
-pub(crate) async fn search(_req: GrammarSearchRequest) -> Result<impl Reply, Rejection> {
-    let grammars = grammar::all().map_err(AppError::from)?;
+pub(crate) async fn search(req: GrammarSearchRequest) -> Result<impl Reply, Rejection> {
+    let grammars = grammar::search(req.name).map_err(AppError::from)?;
     let resp = ApiResponse::Data(grammars);
 
     Ok(warp::reply::json(&resp))
